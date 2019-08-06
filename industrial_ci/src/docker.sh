@@ -115,7 +115,7 @@ function ici_run_cmd_in_docker() {
     echo "Committing container to tag: '$commit_image'"
     ici_quiet docker commit -m "$DOCKER_COMMIT_MSG" "$cid" "$commit_image"
   fi
-  docker_cp $cid:/root/catkin_ws/build-sonar/bw-output $SONAR_WRAPPER_OUTDIR
+  docker cp "$cid:/root/catkin_ws/build-sonar/bw-output" "$SONAR_WRAPPER_OUTDIR"
   ici_quiet docker rm "$cid"
   return $ret
 }
