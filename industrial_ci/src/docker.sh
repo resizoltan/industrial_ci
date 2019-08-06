@@ -89,6 +89,7 @@ function ici_run_cmd_in_docker() {
   local cid
   cid=$(docker create \
       --env-file "${ICI_SRC_PATH}"/docker.env \
+      --name $CONTAINER_NAME \
       "${run_opts[@]}" \
       "$@")
 
