@@ -245,6 +245,8 @@ RUN apt-get update -qq \
 RUN echo "deb ${ROS_REPOSITORY_PATH} \$(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN for i in 1 2 3; do { $keycmd; } &&  break || sleep 1; done
 
+RUN cat /etc/apt/sources.list.d/ros-latest.list
+
 RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
     && apt-get update -qq \
     && apt-get -qq install --no-install-recommends -y \
