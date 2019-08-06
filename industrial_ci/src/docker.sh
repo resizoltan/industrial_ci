@@ -91,7 +91,7 @@ function ici_run_cmd_in_docker() {
       --env-file "${ICI_SRC_PATH}"/docker.env \
       --name $CONTAINER_NAME \
       "${run_opts[@]}" \
-      "$@")
+      "$@")l
 
   # detect user inside container
   local docker_image
@@ -115,7 +115,7 @@ function ici_run_cmd_in_docker() {
     echo "Committing container to tag: '$commit_image'"
     ici_quiet docker commit -m "$DOCKER_COMMIT_MSG" "$cid" "$commit_image"
   fi
-  docker cp "$cid:/root/catkin_ws/build-sonar/bw-output" "$SONAR_WRAPPER_OUTDIR"
+  docker cp "$cid:/root/catkin_ws/build_sonar/bw-output/." "$SONAR_WRAPPER_OUTDIR"
   ici_quiet docker rm "$cid"
   return $ret
 }
