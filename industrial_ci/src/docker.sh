@@ -91,7 +91,7 @@ function ici_run_cmd_in_docker() {
       --env-file "${ICI_SRC_PATH}"/docker.env \
       --name $CONTAINER_NAME \
       "${run_opts[@]}" \
-      "$@")l
+      "$@")
 
   # detect user inside container
   local docker_image
