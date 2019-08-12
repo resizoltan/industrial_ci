@@ -90,6 +90,7 @@ function ici_run_cmd_in_docker() {
   cid=$(docker create \
       --env-file "${ICI_SRC_PATH}"/docker.env \
       --name $CONTAINER_NAME \
+      --user 0 \
       "${run_opts[@]}" \
       "$@")
 
@@ -257,6 +258,7 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
         python-wstool \
         ros-$ROS_DISTRO-catkin \
         ssh-client \
+	curl \
 	unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
