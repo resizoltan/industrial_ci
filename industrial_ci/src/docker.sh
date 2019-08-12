@@ -260,6 +260,9 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip --create-dirs -o /root/sonar/sonar_scanner.zip \
+    && ls /root/sonar
+    && ls /root/sonar/sonar-scanner-4.0.0.1744-linux
+    && ls /root/sonar/sonar-scanner-4.0.0.1744-linux/bin
     && unzip -q /root/sonar/sonar_scanner.zip \
     && chown -R root /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner \
     && sed -i 's/use_embedded_jre=true/use_embedded_jre=false/g' /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
