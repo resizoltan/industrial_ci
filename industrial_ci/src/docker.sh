@@ -261,7 +261,7 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip --create-dirs -o /root/sonar/sonar_scanner.zip \
-    && unzip -q /root/sonar/sonar_scanner.zip \
+    && unzip /root/sonar/sonar_scanner.zip \
     && ls /root/sonar \
     && ls /root/sonar/sonar-scanner-4.0.0.1744-linux \
     && ls /root/sonar/sonar-scanner-4.0.0.1744-linux/bin \
