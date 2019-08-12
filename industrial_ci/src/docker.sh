@@ -258,6 +258,10 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
         ros-$ROS_DISTRO-catkin \
         ssh-client \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip \
+    && unzip -q sonar-scanner-cli-4.0.0.1744-linux.zip \
+    && chown -R root /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner \
+    && sed -i 's/use_embedded_jre=true/use_embedded_jre=false/g' /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
 EOF
 }
