@@ -267,7 +267,6 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
     && ls /root/sonar \
     && ls /root/sonar/sonar-scanner-4.0.0.1744-linux \
     && ls /root/sonar/sonar-scanner-4.0.0.1744-linux/bin \
-    && chown -R root /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner \
-    && sed -i 's/use_embedded_jre=true/use_embedded_jre=false/g' /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
+    && chown -R root /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
 EOF
 }
