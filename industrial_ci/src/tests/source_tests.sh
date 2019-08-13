@@ -140,7 +140,7 @@ catkin_path=$(command -v catkin) || ici_error "catkin not available. Make sure p
 function catkin {
   local cmd=$1
   shift
-  "$catkin_path" "$cmd" -w "$CATKIN_WORKSPACE" "$@"
+  build-wrapper --out-dir "/root/sonar/bw_output" "$catkin_path" "$cmd" -w "$CATKIN_WORKSPACE" "$@"
 }
 
 catkin config --install
@@ -216,7 +216,7 @@ ici_parse_env_array ros_parallel_jobs ROS_PARALLEL_JOBS
 ici_parse_env_array catkin_parallel_test_jobs CATKIN_PARALLEL_TEST_JOBS
 ici_parse_env_array ros_parallel_test_jobs ROS_PARALLEL_TEST_JOBS
 
-if [ "$BUILDER" == catkin ]; then  catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ; fi
+if [ "$BUILDER" == catkin ]; then catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ; fi
 
 ici_time_end  # catkin_build
 
