@@ -158,6 +158,20 @@ if [ ${#cmake_args[@]} -gt 0 ]; then
   catkin config --cmake-args "${cmake_args[@]}"
 fi
 
+# for catkin
+export TARGET_PKGS
+export PKGS_DOWNSTREAM
+
+if [ "${TARGET_PKGS// }" == "" ]; then TARGET_PKGS=$(catkin_topological_order "${TARGET_REPO_PATH}" --only-names); fi
+# fall-back to all workspace packages if target repo does not contain any packages (#232)
+if [ "${TARGET_PKGS// }" == "" ]; then TARGET_PKGS=$(catkin_topological_order "$CATKIN_WORKSPACE/src" --only-names); fi
+if [ "${PKGS_DOWNSTREAM// }" == "" ]; then PKGS_DOWNSTREAM=$( [ "${BUILD_PKGS_WHITELIST// }" == "" ] && echo "$TARGET_PKGS" || echo "$BUILD_PKGS_WHITELIST"); fi
+
+# blacklist target pkgs if coverage needed, they will be built explicitly
+if [ "${COVERAGE_TARGET// }" != "" ]; then
+  catkin config --blacklist $TARGET_PKGS
+fi
+
 ici_time_end  # setup_rosws
 
 
@@ -201,14 +215,6 @@ fi
 
 ici_time_start catkin_build
 
-# for catkin
-export TARGET_PKGS
-export PKGS_DOWNSTREAM
-
-if [ "${TARGET_PKGS// }" == "" ]; then TARGET_PKGS=$(catkin_topological_order "${TARGET_REPO_PATH}" --only-names); fi
-# fall-back to all workspace packages if target repo does not contain any packages (#232)
-if [ "${TARGET_PKGS// }" == "" ]; then TARGET_PKGS=$(catkin_topological_order "$CATKIN_WORKSPACE/src" --only-names); fi
-if [ "${PKGS_DOWNSTREAM// }" == "" ]; then PKGS_DOWNSTREAM=$( [ "${BUILD_PKGS_WHITELIST// }" == "" ] && echo "$TARGET_PKGS" || echo "$BUILD_PKGS_WHITELIST"); fi
 
 declare -a pkgs_downstream pkgs_whitelist catkin_parallel_jobs ros_parallel_jobs catkin_parallel_test_jobs ros_parallel_test_jobs
 
@@ -224,12 +230,13 @@ if [ "$BUILDER" == catkin ]; then
     if [ "${COVERAGE_TARGET// }" != "" ]; then 
 	catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}"
 	catkin_build_with_wrapper $TARGET_PKGS $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}" "${COVERAGE_TARGET}"
+	# remove target packages from blacklist
+	catkin config --no-blacklist  
     else
 	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ;
     fi
 fi
-	
-    
+  
 
 ici_time_end  # catkin_build
 
