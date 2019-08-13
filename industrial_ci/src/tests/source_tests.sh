@@ -221,7 +221,7 @@ ici_parse_env_array catkin_parallel_test_jobs CATKIN_PARALLEL_TEST_JOBS
 ici_parse_env_array ros_parallel_test_jobs ROS_PARALLEL_TEST_JOBS
 
 if [ "$BUILDER" == catkin ]; then
-    if [ "${COVERAGE_TARGET// }" != ""]; then 
+    if [ "${COVERAGE_TARGET// }" != "" ]; then 
 	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" 
 		--cmake-args -DCMAKE_BUILD_TYPE=Debug 
 		--make-args "${ros_parallel_jobs[@]}" "${COVERAGE_TARGET}"; 
