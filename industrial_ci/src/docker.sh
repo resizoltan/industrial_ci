@@ -246,8 +246,6 @@ RUN apt-get update -qq \
 RUN echo "deb ${ROS_REPOSITORY_PATH} \$(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
 RUN for i in 1 2 3; do { $keycmd; } &&  break || sleep 1; done
 
-RUN cat /etc/apt/sources.list.d/ros-latest.list
-
 RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
     && apt-get update -qq \
     && apt-get -qq install --no-install-recommends -y \
@@ -262,11 +260,15 @@ RUN sed -i "/^# deb.*multiverse/ s/^# //" /etc/apt/sources.list \
 	unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip --create-dirs -o /root/sonar/sonar_scanner.zip \
+
+RUN curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip --create-dirs -o /root/sonar/sonar_scanner.zip \
     && unzip /root/sonar/sonar_scanner.zip -d /root/sonar/ \
-    && ls /root/sonar \
-    && ls /root/sonar/sonar-scanner-4.0.0.1744-linux \
-    && ls /root/sonar/sonar-scanner-4.0.0.1744-linux/bin \
-    && chown -R root /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
+    && ln -s /root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
+
+RUN curl https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip -o /root/sonar/build-wrapper.zip \
+    && unzip -q /root/sonar/build-wrapper.zip -d /root/sonar/ \
+    && chmod +x /root/sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
+    && ln -s /root/sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 /usr/local/bin/build-wrapper
+
 EOF
 }
