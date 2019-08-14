@@ -281,13 +281,13 @@ if [ "$NOT_TEST_BUILD" != "true" ]; then
 
     ici_time_start catkin_build_tests
     if [ "$BUILDER" == catkin ]; then
-        catkin build --no-deps --catkin-make-args tests -- $OPT_VI --summarize  --no-status "${pkgs_downstream[@]}" "${catkin_parallel_jobs[@]}" $OPT_COV --make-args "${ros_parallel_jobs[@]}" --
+        catkin build --no-deps --catkin-make-args tests -- $OPT_VI --summarize "${pkgs_downstream[@]}" "${catkin_parallel_jobs[@]}" $OPT_COV --make-args "${ros_parallel_jobs[@]}" --
     fi
     ici_time_end  # catkin_build_tests
 
     ici_time_start catkin_run_tests
     if [ "$BUILDER" == catkin ]; then
-        catkin build --no-deps --catkin-make-args run_tests -- $OPT_RUN_V --no-status "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" $OPT_COV --make-args "${ros_parallel_test_jobs[@]}" --
+        catkin build --no-deps --catkin-make-args run_tests -- $OPT_RUN_V "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" $OPT_COV --make-args "${ros_parallel_test_jobs[@]}" --
         if [ "${ROS_DISTRO}" == "hydro" ]; then
             PATH=/usr/local/bin:$PATH  # for installed catkin_test_results
             PYTHONPATH=/usr/local/lib/python2.7/dist-packages:$PYTHONPATH
@@ -301,6 +301,13 @@ if [ "$NOT_TEST_BUILD" != "true" ]; then
         fi
     fi
     ici_time_end  # catkin_run_tests
+
+	if [ "$TEST_COVERAGE" ]; then
+		ici_time_start generate_coverage_report
+        	catkin build --no-deps --catkin-make-args coverage -- $OPT_RUN_V "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" $OPT_COV --make-args "${ros_parallel_test_jobs[@]}" --
+		ici_time_end # generate_coverage_report
+	fi
+
 fi
 
 if [ "$NOT_TEST_INSTALL" != "true" ]; then
