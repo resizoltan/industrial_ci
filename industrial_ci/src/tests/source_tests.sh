@@ -43,6 +43,13 @@ ici_time_start init_ici_environment
 BUILDER=catkin
 ROSWS=wstool
 
+# Optional coverage report
+if [ "$TEST_COVERAGE" ]
+    OPT_COV="--cmake-args -DTEST_COVERAGE=ON"
+else
+    OPT_COV=""
+fi
+
 ici_time_end  # init_ici_environment
 
 ici_time_start setup_apt
@@ -168,9 +175,9 @@ if [ "${TARGET_PKGS// }" == "" ]; then TARGET_PKGS=$(catkin_topological_order "$
 if [ "${PKGS_DOWNSTREAM// }" == "" ]; then PKGS_DOWNSTREAM=$( [ "${BUILD_PKGS_WHITELIST// }" == "" ] && echo "$TARGET_PKGS" || echo "$BUILD_PKGS_WHITELIST"); fi
 
 # blacklist target pkgs if coverage needed, they will be built explicitly
-if [ "${COVERAGE_TARGET// }" != "" ]; then
-  catkin config --blacklist $TARGET_PKGS
-fi
+#if [ "${COVERAGE_TARGET// }" != "" ]; then
+#  catkin config --blacklist $TARGET_PKGS
+#fi
 
 ici_time_end  # setup_rosws
 
@@ -227,14 +234,14 @@ ici_parse_env_array catkin_parallel_test_jobs CATKIN_PARALLEL_TEST_JOBS
 ici_parse_env_array ros_parallel_test_jobs ROS_PARALLEL_TEST_JOBS
 
 if [ "$BUILDER" == catkin ]; then
-    if [ "${COVERAGE_TARGET// }" != "" ]; then 
-	catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}"
-	catkin_build_with_wrapper $TARGET_PKGS $OPT_VI --no-deps --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}" tests "${COVERAGE_TARGET}"
-	# remove target packages from blacklist
-	catkin config --no-blacklist  
-    else
-	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ;
-    fi
+ #   if [ "${COVERAGE_TARGET// }" != "" ]; then 
+#	catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}"
+	catkin_build_with_wrapper $OPT_VI --no-deps --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" $OPT_COV --make-args "${ros_parallel_jobs[@]}"
+#	# remove target packages from blacklist
+#	catkin config --no-blacklist  
+#    else
+#	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ;
+#    fi
 fi
   
 
@@ -274,13 +281,13 @@ if [ "$NOT_TEST_BUILD" != "true" ]; then
 
     ici_time_start catkin_build_tests
     if [ "$BUILDER" == catkin ]; then
-        catkin build --no-deps --catkin-make-args tests -- $OPT_VI --summarize  --no-status "${pkgs_downstream[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" --
+        catkin_build_with_wrapper --no-deps --catkin-make-args tests -- $OPT_VI --summarize  --no-status "${pkgs_downstream[@]}" "${catkin_parallel_jobs[@]}" $OPT_COV --make-args "${ros_parallel_jobs[@]}" --
     fi
     ici_time_end  # catkin_build_tests
 
     ici_time_start catkin_run_tests
     if [ "$BUILDER" == catkin ]; then
-        catkin build --no-deps --catkin-make-args run_tests -- $OPT_RUN_V --no-status "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" --make-args "${ros_parallel_test_jobs[@]}" --
+        catkin_build_with_wrapper --no-deps --catkin-make-args run_tests -- $OPT_RUN_V --no-status "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" $OPT_COV --make-args "${ros_parallel_test_jobs[@]}" --
         if [ "${ROS_DISTRO}" == "hydro" ]; then
             PATH=/usr/local/bin:$PATH  # for installed catkin_test_results
             PYTHONPATH=/usr/local/lib/python2.7/dist-packages:$PYTHONPATH
