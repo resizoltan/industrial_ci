@@ -44,7 +44,7 @@ BUILDER=catkin
 ROSWS=wstool
 
 # Optional coverage report
-if [ "$TEST_COVERAGE" ]
+if [ "$TEST_COVERAGE" ]; then
     OPT_COV="--cmake-args -DTEST_COVERAGE=ON"
 else
     OPT_COV=""
