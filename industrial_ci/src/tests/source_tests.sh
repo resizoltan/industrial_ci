@@ -44,7 +44,7 @@ BUILDER=catkin
 ROSWS=wstool
 
 # Optional coverage report
-if [ "$TEST_COVERAGE" ]; then
+if [ "$TEST_COVERAGE" ] && [ "$TEST_COVERAGE" == true ]; then
     OPT_COV="--cmake-args -DTEST_COVERAGE=ON"
 else
     OPT_COV=""
@@ -302,7 +302,7 @@ if [ "$NOT_TEST_BUILD" != "true" ]; then
     fi
     ici_time_end  # catkin_run_tests
 
-	if [ "$TEST_COVERAGE" ]; then
+	if [ "$TEST_COVERAGE" ] && [ "$TEST_COVERAGE" == true ]; then
 		ici_time_start generate_coverage_report
         	catkin build --no-deps --catkin-make-args coverage -- $OPT_RUN_V "${pkgs_downstream[@]}" "${catkin_parallel_test_jobs[@]}" $OPT_COV --make-args "${ros_parallel_test_jobs[@]}" --
 		ici_time_end # generate_coverage_report
