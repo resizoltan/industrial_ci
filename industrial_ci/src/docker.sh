@@ -239,7 +239,8 @@ ENV ROS_DISTRO $ROS_DISTRO
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-RUN apt-get update -qq \
+RUN apt-get clean \
+    && apt-get update -qq \
     && apt-get -qq install --no-install-recommends -y apt-utils gnupg wget ca-certificates lsb-release dirmngr
 
 RUN echo "deb ${ROS_REPOSITORY_PATH} \$(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
