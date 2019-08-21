@@ -234,42 +234,11 @@ ici_parse_env_array catkin_parallel_test_jobs CATKIN_PARALLEL_TEST_JOBS
 ici_parse_env_array ros_parallel_test_jobs ROS_PARALLEL_TEST_JOBS
 
 if [ "$BUILDER" == catkin ]; then
- #   if [ "${COVERAGE_TARGET// }" != "" ]; then 
-#	catkin build $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --cmake-args -DCMAKE_BUILD_TYPE=Debug --make-args "${ros_parallel_jobs[@]}"
 	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" $OPT_COV --make-args "${ros_parallel_jobs[@]}"
-#	# remove target packages from blacklist
-#	catkin config --no-blacklist  
-#    else
-#	catkin_build_with_wrapper $OPT_VI --summarize  --no-status "${pkgs_whitelist[@]}" "${catkin_parallel_jobs[@]}" --make-args "${ros_parallel_jobs[@]}" ;
-#    fi
 fi
   
 
 ici_time_end  # catkin_build
-
-#ici_time_start sonar
-
-## save current working directory
-#working_dir=$PWD
-## create build space for sonar
-#cd /root/catkin_ws
-#mkdir build_sonar
-#cd build_sonar
-## make using sonar build wrapper
-#cmake ../src/rosintro
-#/root/sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir "/root/catkin_ws/build_sonar/bw-output" make
-## make tests
-##make test
-## run sonar scanner
-#mkdir /root/sonar/src
-#cp -r /root/catkin_ws/src/rosintro /root/sonar/src/
-#cd /root/sonar/src/rosintro
-#/root/sonar/sonar-scanner-4.0.0.1744-linux/bin/sonar-scanner
-## return to working directory
-#cd $working_dir
-
-
-#ici_time_end
 
 
 if [ "$NOT_TEST_BUILD" != "true" ]; then
@@ -338,4 +307,10 @@ if [ "$NOT_TEST_INSTALL" != "true" ]; then
 
     ici_time_end  # catkin_install_run_tests
 
+fi
+
+if [ "$SONAR_SCANNER" ] && [ "$SONAR_SCANNER" != "" ]; then
+	ici_time_start sonar_scanner
+	sonar-scanner -Dsonar.projectBaseDir=$TARGET_REPO_PATH
+	ici_time_end # sonar_scanner
 fi
