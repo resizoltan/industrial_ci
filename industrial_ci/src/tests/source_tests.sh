@@ -311,6 +311,6 @@ fi
 
 if [ "$SONAR_SCANNER" ] && [ "$SONAR_SCANNER" != "" ]; then
 	ici_time_start sonar_scanner
-	sonar-scanner -Dsonar.projectBaseDir=$TARGET_REPO_PATH
+	sonar-scanner -Dsonar.projectBaseDir=$CATKIN_WORKSPACE/src/$TARGET_REPO_NAME
 	ici_time_end # sonar_scanner
 fi
